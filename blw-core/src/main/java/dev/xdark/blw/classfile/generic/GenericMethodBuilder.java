@@ -26,8 +26,8 @@ public class GenericMethodBuilder extends GenericMemberBuilder<MethodType, Gener
 	protected List<Parameter> parameters = List.of();
 	protected Reflectable<Code> code;
 	protected Reflectable<? extends Element> annotationDefault;
-	private Map<Integer, List<AnnotationBuilder<?>>> visibleRuntimeParameterAnnotations = new TreeMap<>();
-	private Map<Integer, List<AnnotationBuilder<?>>> invisibleRuntimeParameterAnnotations = new TreeMap<>();
+	protected Map<Integer, List<AnnotationBuilder<?>>> visibleRuntimeParameterAnnotations = new TreeMap<>();
+	protected Map<Integer, List<AnnotationBuilder<?>>> invisibleRuntimeParameterAnnotations = new TreeMap<>();
 
 	public GenericMethodBuilder(int accessFlags, String name, MethodType type) {
 		this.accessFlags = accessFlags;

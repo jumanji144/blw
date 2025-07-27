@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 public class MapAnnotation implements Annotation {
 	private final InstanceType type;
@@ -40,18 +41,16 @@ public class MapAnnotation implements Annotation {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (!(o instanceof MapAnnotation entries)) return false;
 
-		MapAnnotation entries = (MapAnnotation) o;
-
-		if (!type.equals(entries.type)) return false;
-		return map.equals(entries.map);
+		if (!Objects.equals(type, entries.type)) return false;
+		return Objects.equals(map, entries.map);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = type.hashCode();
-		result = 31 * result + map.hashCode();
+		int result = type != null ? type.hashCode() : 0;
+		result = 31 * result + (map != null ? map.hashCode() : 0);
 		return result;
 	}
 
