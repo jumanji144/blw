@@ -134,7 +134,9 @@ public final class TypePath {
     int typePathIndex = 0;
     while (typePathIndex < typePathLength) {
       char c = typePath.charAt(typePathIndex++);
-      if (c == '[') {
+      if (c == '_') {
+        return null;
+      } else if (c == '[') {
         write(dos, ARRAY_ELEMENT, 0);
       } else if (c == '.') {
         write(dos, INNER_TYPE, 0);
