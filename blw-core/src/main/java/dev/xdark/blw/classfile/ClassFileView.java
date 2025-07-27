@@ -22,7 +22,21 @@ public non-sealed interface ClassFileView extends Accessible, Annotated, Signed,
 
 	List<Method> methods();
 
+	default Method method(String name, String desc) {
+		return methods().stream()
+				.filter(m -> m.name().equals(name) && m.type().descriptor().equals(desc))
+				.findFirst()
+				.orElse(null);
+	}
+
 	List<Field> fields();
+
+	default Field field(String name, String desc) {
+		return fields().stream()
+				.filter(f -> f.name().equals(name) && f.type().descriptor().equals(desc))
+				.findFirst()
+				.orElse(null);
+	}
 
 	List<RecordComponent> recordComponents();
 

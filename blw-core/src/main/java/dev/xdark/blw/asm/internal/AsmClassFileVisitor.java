@@ -8,8 +8,10 @@ import dev.xdark.blw.version.JavaVersion;
 import org.objectweb.asm.*;
 
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AsmClassFileVisitor extends ClassVisitor {
 	protected final ClassBuilder<?, ?> classBuilder;
@@ -27,7 +29,7 @@ public class AsmClassFileVisitor extends ClassVisitor {
 				.type(Types.instanceTypeFromInternalName(name))
 				.signature(signature)
 				.setSuperClass(superName == null ? null : Types.instanceTypeFromInternalName(superName))
-				.setInterfaces(Arrays.stream(interfaces).map(Types::instanceTypeFromInternalName).toList());
+				.setInterfaces(Arrays.stream(interfaces).map(Types::instanceTypeFromInternalName).collect(Collectors.toCollection(ArrayList::new)));
 	}
 
 	@Override
@@ -37,7 +39,7 @@ public class AsmClassFileVisitor extends ClassVisitor {
 			return null;
 		}
 		method.signature(signature);
-		method.exceptionTypes(exceptions == null ? List.of() : Arrays.stream(exceptions).map(Types::instanceTypeFromInternalName).toList());
+		method.exceptionTypes(exceptions == null ? List.of() : Arrays.stream(exceptions).map(Types::instanceTypeFromInternalName).collect(Collectors.toCollection(ArrayList::new)));
 		return new AsmMethodVisitor(method, !Modifier.isAbstract(access) && !Modifier.isNative(access));
 	}
 

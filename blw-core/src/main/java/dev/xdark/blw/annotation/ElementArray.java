@@ -1,7 +1,9 @@
 package dev.xdark.blw.annotation;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class ElementArray implements Element, Iterable<Element> {
@@ -12,7 +14,7 @@ public final class ElementArray implements Element, Iterable<Element> {
 	}
 
 	public ElementArray(Stream<Element> elements) {
-		this(elements.toList());
+		this((List<Element>) elements.collect(Collectors.toCollection(ArrayList::new)));
 	}
 
 	public <E extends Element> E get(int index) {

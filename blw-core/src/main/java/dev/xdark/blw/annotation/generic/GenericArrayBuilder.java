@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GenericArrayBuilder implements ElementArrayBuilder<GenericArrayBuilder> {
 	protected final List<Object> values = new ArrayList<>();
@@ -32,9 +33,9 @@ public class GenericArrayBuilder implements ElementArrayBuilder<GenericArrayBuil
 
 	@Override
 	public ElementArray build() {
-		return new ElementArray(values.stream().map(v -> {
+		return new ElementArray((List<Element>) values.stream().map(v -> {
 			//noinspection unchecked
 			return v instanceof Element element ? element : ((Builder<Element>) v).build();
-		}).toList());
+		}).collect(Collectors.toCollection(ArrayList::new)));
 	}
 }

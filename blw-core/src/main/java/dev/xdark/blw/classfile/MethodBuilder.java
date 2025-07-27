@@ -13,9 +13,11 @@ import dev.xdark.blw.util.Reflectable;
 import dev.xdark.blw.util.Split;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public interface MethodBuilder<E extends Method, B extends MethodBuilder<E, B>>
 		extends MemberBuilder<MethodType, E, B> {
@@ -53,7 +55,7 @@ public interface MethodBuilder<E extends Method, B extends MethodBuilder<E, B>>
 	default @NotNull Map<Integer, List<Annotation>> buildVisibleRuntimeParameterAnnotations() {
 		Map<Integer, List<Annotation>> map = new TreeMap<>();
 		getVisibleRuntimeParameterAnnotations().forEach((idx, list) -> {
-			map.put(idx, list.stream().map(Builder::build).toList());
+			map.put(idx, list.stream().map(Builder::build).collect(Collectors.toCollection(ArrayList::new)));
 		});
 		return map;
 	}
@@ -61,7 +63,7 @@ public interface MethodBuilder<E extends Method, B extends MethodBuilder<E, B>>
 	default @NotNull Map<Integer, List<Annotation>> buildInvisibleRuntimeParameterAnnotations() {
 		Map<Integer, List<Annotation>> map = new TreeMap<>();
 		getInvisibleRuntimeParameterAnnotations().forEach((idx, list) -> {
-			map.put(idx, list.stream().map(Builder::build).toList());
+			map.put(idx, list.stream().map(Builder::build).collect(Collectors.toCollection(ArrayList::new)));
 		});
 		return map;
 	}

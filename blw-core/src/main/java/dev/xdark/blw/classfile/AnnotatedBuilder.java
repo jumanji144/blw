@@ -11,7 +11,9 @@ import dev.xdark.blw.util.Split;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static dev.xdark.blw.util.SneakyCast.cast;
 
@@ -55,7 +57,7 @@ public interface AnnotatedBuilder<E extends Annotated, B extends AnnotatedBuilde
 	 * @return List of runtime annotations.
 	 */
 	default @NotNull List<Annotation> buildVisibleRuntimeAnnotations() {
-		return getVisibleRuntimeAnnotations().stream().map(Builder::build).toList();
+		return getVisibleRuntimeAnnotations().stream().map(Builder::build).collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	/**
@@ -64,7 +66,7 @@ public interface AnnotatedBuilder<E extends Annotated, B extends AnnotatedBuilde
 	 * @return List of invisible annotations.
 	 */
 	default @NotNull List<Annotation> buildInvisibleRuntimeAnnotation() {
-		return getInvisibleRuntimeAnnotation().stream().map(Builder::build).toList();
+		return getInvisibleRuntimeAnnotation().stream().map(Builder::build).collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	/**
@@ -74,7 +76,7 @@ public interface AnnotatedBuilder<E extends Annotated, B extends AnnotatedBuilde
 	 */
 	@SuppressWarnings("unchecked")
 	default @NotNull List<TypeAnnotation> buildVisibleRuntimeTypeAnnotations() {
-		return (List<TypeAnnotation>) (Object) getVisibleRuntimeTypeAnnotations().stream().map(Builder::build).toList();
+		return (List<TypeAnnotation>) (Object) getVisibleRuntimeTypeAnnotations().stream().map(Builder::build).collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	/**
@@ -84,7 +86,7 @@ public interface AnnotatedBuilder<E extends Annotated, B extends AnnotatedBuilde
 	 */
 	@SuppressWarnings("unchecked")
 	default @NotNull List<TypeAnnotation> buildInvisibleRuntimeTypeAnnotation() {
-		return (List<TypeAnnotation>) (Object) getInvisibleRuntimeTypeAnnotation().stream().map(Builder::build).toList();
+		return (List<TypeAnnotation>) (Object) getInvisibleRuntimeTypeAnnotation().stream().map(Builder::build).collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	/**
