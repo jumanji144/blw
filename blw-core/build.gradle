@@ -1,4 +1,5 @@
 dependencies {
-    compileOnly 'org.ow2.asm:asm:9.6'
-    testRuntimeOnly 'org.ow2.asm:asm:9.6'
+    compileOnly 'org.ow2.asm:asm:9.8'
+    testImplementation 'org.ow2.asm:asm:9.8'
+    testImplementation 'org.ow2.asm:asm-tree:9.8'
 }

@@ -156,6 +156,7 @@ public final class InternalAsmLibrary implements BytecodeLibrary {
 		LabelMappingImpl mapping = new LabelMappingImpl();
 		for (Method method : classFileView.methods()) {
 			MethodVisitor mv = writer.visitMethod(method.accessFlags(), method.name(), method.type().descriptor(), method.signature(), method.exceptionTypes().stream().map(ObjectType::internalName).toArray(String[]::new));
+			method.parameters().forEach(p -> mv.visitParameter(p.name(), p.accessFlags()));
 			Code code = method.code();
 			if (code != null) {
 				mapping.mappings.clear();
@@ -185,6 +186,32 @@ public final class InternalAsmLibrary implements BytecodeLibrary {
 				AnnotationDumper dumper = mv::visitAnnotation;
 				dumpAnnotationList(dumper, method.visibleRuntimeAnnotations(), true);
 				dumpAnnotationList(dumper, method.invisibleRuntimeAnnotations(), false);
+			}
+			{
+				method.visibleRuntimeParameterAnnotations().forEach((idx, parameters) -> {
+					for (Annotation annotation : parameters) {
+						AnnotationVisitor visitor = mv.visitParameterAnnotation(idx, annotation.type().descriptor(), true);
+						if (visitor == null) {
+							continue;
+						}
+						for (Map.Entry<String, Element> entry : annotation) {
+							visitElement(visitor, entry.getKey(), entry.getValue());
+						}
+						visitor.visitEnd();
+					}
+				});
+				method.invisibleRuntimeParameterAnnotations().forEach((idx, parameters) -> {
+					for (Annotation annotation : parameters) {
+						AnnotationVisitor visitor = mv.visitParameterAnnotation(idx, annotation.type().descriptor(), false);
+						if (visitor == null) {
+							continue;
+						}
+						for (Map.Entry<String, Element> entry : annotation) {
+							visitElement(visitor, entry.getKey(), entry.getValue());
+						}
+						visitor.visitEnd();
+					}
+				});
 			}
 			{
 				Element annotationDefault = method.annotationDefault();

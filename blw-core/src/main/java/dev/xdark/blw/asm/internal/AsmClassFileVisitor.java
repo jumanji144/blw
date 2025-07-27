@@ -111,4 +111,11 @@ public class AsmClassFileVisitor extends ClassVisitor {
 	public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
 		return Util.visitAnnotation((ClassBuilder) classBuilder, descriptor, visible);
 	}
+
+	@Override
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible) {
+		return Util.visitTypeAnnotation((ClassBuilder) classBuilder, descriptor, visible,
+				typeRef, typePath == null ? null : dev.xdark.blw.annotation.TypePath.fromString(typePath.toString()));
+	}
 }

@@ -7,6 +7,7 @@ import dev.xdark.blw.code.Instruction;
 import dev.xdark.blw.code.instruction.*;
 import dev.xdark.blw.constant.*;
 import dev.xdark.blw.type.*;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Handle;
 
@@ -234,6 +235,21 @@ public final class Util {
 			builder = annotated.addVisibleRuntimeAnnotation(type).child();
 		} else {
 			builder = annotated.addInvisibleRuntimeAnnotation(type).child();
+		}
+		return builder == null ? null : new AsmAnnotationVisitor(builder);
+	}
+
+	static <E extends Annotated, A extends AnnotatedBuilder<E, A>> AnnotationVisitor visitTypeAnnotation(A annotated,
+	                                                                                                     String descriptor,
+	                                                                                                     boolean visible,
+	                                                                                                     int typeRef,
+	                                                                                                     @Nullable TypePath typePath) {
+		InstanceType type = Types.instanceTypeFromDescriptor(descriptor);
+		AnnotationBuilder<?> builder;
+		if (visible) {
+			builder = annotated.addVisibleRuntimeTypeAnnotation(type, typeRef, typePath).child();
+		} else {
+			builder = annotated.addInvisibleRuntimeTypeAnnotation(type, typeRef, typePath).child();
 		}
 		return builder == null ? null : new AsmAnnotationVisitor(builder);
 	}

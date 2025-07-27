@@ -1,5 +1,6 @@
 package dev.xdark.blw.asm.internal;
 
+import dev.xdark.blw.annotation.AnnotationBuilder;
 import dev.xdark.blw.classfile.MethodBuilder;
 import dev.xdark.blw.classfile.attribute.generic.GenericParameter;
 import dev.xdark.blw.code.CodeBuilder;
@@ -8,13 +9,22 @@ import dev.xdark.blw.code.Instruction;
 import dev.xdark.blw.code.TryCatchBlock;
 import dev.xdark.blw.code.attribute.generic.GenericLocal;
 import dev.xdark.blw.code.generic.GenericLabel;
-import dev.xdark.blw.code.instruction.*;
+import dev.xdark.blw.code.instruction.AllocateMultiDimArrayInstruction;
+import dev.xdark.blw.code.instruction.ConditionalJumpInstruction;
+import dev.xdark.blw.code.instruction.ImmediateJumpInstruction;
+import dev.xdark.blw.code.instruction.LookupSwitchInstruction;
+import dev.xdark.blw.code.instruction.TableSwitchInstruction;
+import dev.xdark.blw.code.instruction.VarInstruction;
+import dev.xdark.blw.code.instruction.VariableIncrementInstruction;
+import dev.xdark.blw.type.InstanceType;
 import dev.xdark.blw.type.TypeReader;
 import dev.xdark.blw.type.Types;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.TypePath;
 
 import java.util.Arrays;
 
@@ -167,6 +177,45 @@ final class AsmMethodVisitor extends MethodVisitor {
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
 		return Util.visitAnnotation((MethodBuilder) method, descriptor, visible);
+	}
+
+	@Override
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public AnnotationVisitor visitTypeAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible) {
+		return Util.visitTypeAnnotation((MethodBuilder) method, descriptor, visible,
+				typeRef, typePath == null ? null : dev.xdark.blw.annotation.TypePath.fromString(typePath.toString()));
+	}
+
+	@Override
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public AnnotationVisitor visitInsnAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible) {
+		return Util.visitTypeAnnotation((MethodBuilder) method, descriptor, visible,
+				typeRef, typePath == null ? null : dev.xdark.blw.annotation.TypePath.fromString(typePath.toString()));
+	}
+
+	@Override
+	@SuppressWarnings({"rawtypes", "unchecked"})
+	public AnnotationVisitor visitTryCatchAnnotation(int typeRef, @Nullable TypePath typePath, String descriptor, boolean visible) {
+		return Util.visitTypeAnnotation((MethodBuilder) method, descriptor, visible,
+				typeRef, typePath == null ? null : dev.xdark.blw.annotation.TypePath.fromString(typePath.toString()));
+	}
+
+	@Override
+	public AnnotationVisitor visitParameterAnnotation(int parameter, String descriptor, boolean visible) {
+		InstanceType type = Types.instanceTypeFromDescriptor(descriptor);
+		AnnotationBuilder<?> builder;
+		if (visible) {
+			builder = method.addVisibleRuntimeParameterAnnotations(parameter, type).child();
+		} else {
+			builder = method.addInvisibleRuntimeParameterAnnotations(parameter, type).child();
+		}
+		return builder == null ? null : new AsmAnnotationVisitor(builder);
+	}
+
+	@Override
+	public AnnotationVisitor visitLocalVariableAnnotation(int typeRef, TypePath typePath, Label[] start, Label[] end, int[] index, String descriptor, boolean visible) {
+		// TODO: Implement
+		return super.visitLocalVariableAnnotation(typeRef, typePath, start, end, index, descriptor, visible);
 	}
 
 	@Override

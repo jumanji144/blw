@@ -1,13 +1,11 @@
 package dev.xdark.blw.classfile.generic;
 
-import dev.xdark.blw.annotation.Annotation;
 import dev.xdark.blw.annotation.AnnotationBuilder;
+import dev.xdark.blw.annotation.TypeAnnotationBuilder;
 import dev.xdark.blw.classfile.Member;
 import dev.xdark.blw.classfile.MemberBuilder;
 import dev.xdark.blw.type.Type;
-import dev.xdark.blw.util.Builder;
 import dev.xdark.blw.util.LazyList;
-import dev.xdark.blw.util.Split;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +15,8 @@ public abstract class GenericMemberBuilder<T extends Type, M extends Member<T>, 
 		implements MemberBuilder<T, M, B> {
 	protected final List<AnnotationBuilder<?>> visibleRuntimeAnnotations = LazyList.arrayList();
 	protected final List<AnnotationBuilder<?>> invisibleRuntimeAnnotations = LazyList.arrayList();
+	protected final List<TypeAnnotationBuilder<?>> visibleRuntimeTypeAnnotations = LazyList.arrayList();
+	protected final List<TypeAnnotationBuilder<?>> invisibleRuntimeTypeAnnotations = LazyList.arrayList();
 	protected T type;
 	protected int accessFlags;
 	protected String name;
@@ -32,6 +32,18 @@ public abstract class GenericMemberBuilder<T extends Type, M extends Member<T>, 
 	@SuppressWarnings("unchecked")
 	public @NotNull List<AnnotationBuilder<?>> getInvisibleRuntimeAnnotation() {
 		return invisibleRuntimeAnnotations;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public @NotNull List<TypeAnnotationBuilder<?>> getVisibleRuntimeTypeAnnotations() {
+		return visibleRuntimeTypeAnnotations;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public @NotNull List<TypeAnnotationBuilder<?>> getInvisibleRuntimeTypeAnnotation() {
+		return invisibleRuntimeTypeAnnotations;
 	}
 
 	@Override

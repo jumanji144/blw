@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
-public final class MapAnnotation implements Annotation {
+public class MapAnnotation implements Annotation {
 	private final InstanceType type;
 	private final Map<String, Element> map;
 

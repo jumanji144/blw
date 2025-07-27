@@ -1,10 +1,10 @@
 package dev.xdark.blw.classfile.generic;
 
 import dev.xdark.blw.annotation.AnnotationBuilder;
+import dev.xdark.blw.annotation.TypeAnnotationBuilder;
 import dev.xdark.blw.classfile.RecordComponentBuilder;
 import dev.xdark.blw.type.ClassType;
 import dev.xdark.blw.util.LazyList;
-import dev.xdark.blw.util.Split;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,6 +13,8 @@ import java.util.List;
 public class GenericRecordComponentBuilder implements RecordComponentBuilder<GenericRecordComponentBuilder> {
 	protected final List<AnnotationBuilder<?>> visibleRuntimeAnnotations = LazyList.arrayList();
 	protected final List<AnnotationBuilder<?>> invisibleRuntimeAnnotations = LazyList.arrayList();
+	protected final List<TypeAnnotationBuilder<?>> visibleRuntimeTypeAnnotations = LazyList.arrayList();
+	protected final List<TypeAnnotationBuilder<?>> invisibleRuntimeTypeAnnotations = LazyList.arrayList();
 	protected String name;
 	protected ClassType type;
 	protected String signature;
@@ -25,7 +27,11 @@ public class GenericRecordComponentBuilder implements RecordComponentBuilder<Gen
 
 	@Override
 	public GenericRecordComponent build() {
-		return new GenericRecordComponent(name, signature, type, buildVisibleRuntimeAnnotations(), buildInvisibleRuntimeAnnotation());
+		return new GenericRecordComponent(name, signature, type,
+				buildVisibleRuntimeAnnotations(), buildInvisibleRuntimeAnnotation(),
+				buildVisibleRuntimeTypeAnnotations(), buildInvisibleRuntimeTypeAnnotation()
+
+		);
 	}
 
 	@Override
@@ -71,5 +77,17 @@ public class GenericRecordComponentBuilder implements RecordComponentBuilder<Gen
 	@SuppressWarnings("unchecked")
 	public @NotNull List<AnnotationBuilder<?>> getInvisibleRuntimeAnnotation() {
 		return invisibleRuntimeAnnotations;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public @NotNull List<TypeAnnotationBuilder<?>> getVisibleRuntimeTypeAnnotations() {
+		return visibleRuntimeTypeAnnotations;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public @NotNull List<TypeAnnotationBuilder<?>> getInvisibleRuntimeTypeAnnotation() {
+		return invisibleRuntimeTypeAnnotations;
 	}
 }

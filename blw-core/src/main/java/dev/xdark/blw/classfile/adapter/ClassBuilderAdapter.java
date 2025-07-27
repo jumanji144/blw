@@ -1,6 +1,7 @@
 package dev.xdark.blw.classfile.adapter;
 
 import dev.xdark.blw.annotation.AnnotationBuilder;
+import dev.xdark.blw.annotation.TypeAnnotationBuilder;
 import dev.xdark.blw.classfile.Module;
 import dev.xdark.blw.classfile.*;
 import dev.xdark.blw.classfile.attribute.InnerClass;
@@ -57,6 +58,16 @@ public class ClassBuilderAdapter<E extends ClassFileView, B extends ClassBuilder
 	@Override
 	public @NotNull <A extends AnnotationBuilder<A>> List<A> getInvisibleRuntimeAnnotation() {
 		return delegate.getInvisibleRuntimeAnnotation();
+	}
+
+	@Override
+	public @NotNull <A extends TypeAnnotationBuilder<A>> List<A> getVisibleRuntimeTypeAnnotations() {
+		return delegate.getVisibleRuntimeTypeAnnotations();
+	}
+
+	@Override
+	public @NotNull <A extends TypeAnnotationBuilder<A>> List<A> getInvisibleRuntimeTypeAnnotation() {
+		return delegate.getInvisibleRuntimeTypeAnnotation();
 	}
 
 	@Override

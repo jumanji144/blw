@@ -1,6 +1,7 @@
 package dev.xdark.blw.classfile.generic;
 
 import dev.xdark.blw.annotation.Annotation;
+import dev.xdark.blw.annotation.TypeAnnotation;
 import dev.xdark.blw.classfile.Module;
 import dev.xdark.blw.classfile.*;
 import dev.xdark.blw.classfile.attribute.InnerClass;
@@ -32,6 +33,8 @@ public class GenericClassFileView implements ClassFileView {
 	protected final String sourceFile, sourceDebug;
 	protected final List<Annotation> visibleRuntimeAnnotations;
 	protected final List<Annotation> invisibleRuntimeAnnotations;
+	protected final List<TypeAnnotation> visibleRuntimeTypeAnnotations;
+	protected final List<TypeAnnotation> invisibleRuntimeTypeAnnotations;
 	protected final List<Module> modules;
 
 	public GenericClassFileView(JavaVersion version, ConstantPool pool, int accessFlags, InstanceType type,
@@ -41,6 +44,7 @@ public class GenericClassFileView implements ClassFileView {
 								List<InstanceType> permittedSubclasses,
 								InstanceType nestHost, List<InstanceType> nestMembers, String sourceFile, String sourceDebug,
 								List<Annotation> visibleRuntimeAnnotations, List<Annotation> invisibleRuntimeAnnotations,
+								List<TypeAnnotation> visibleRuntimeTypeAnnotations, List<TypeAnnotation> invisibleRuntimeTypeAnnotations,
 								List<Module> modules) {
 		this.version = version;
 		this.pool = pool;
@@ -63,6 +67,8 @@ public class GenericClassFileView implements ClassFileView {
 		this.sourceDebug = sourceDebug;
 		this.visibleRuntimeAnnotations = visibleRuntimeAnnotations;
 		this.invisibleRuntimeAnnotations = invisibleRuntimeAnnotations;
+		this.visibleRuntimeTypeAnnotations = visibleRuntimeTypeAnnotations;
+		this.invisibleRuntimeTypeAnnotations = invisibleRuntimeTypeAnnotations;
 		this.modules = modules;
 	}
 
@@ -79,6 +85,16 @@ public class GenericClassFileView implements ClassFileView {
 	@Override
 	public List<Annotation> invisibleRuntimeAnnotations() {
 		return invisibleRuntimeAnnotations;
+	}
+
+	@Override
+	public List<TypeAnnotation> visibleRuntimeTypeAnnotations() {
+		return visibleRuntimeTypeAnnotations;
+	}
+
+	@Override
+	public List<TypeAnnotation> invisibleRuntimeTypeAnnotations() {
+		return invisibleRuntimeTypeAnnotations;
 	}
 
 	@Override

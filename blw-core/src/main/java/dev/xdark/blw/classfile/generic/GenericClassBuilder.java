@@ -1,6 +1,7 @@
 package dev.xdark.blw.classfile.generic;
 
 import dev.xdark.blw.annotation.AnnotationBuilder;
+import dev.xdark.blw.annotation.TypeAnnotationBuilder;
 import dev.xdark.blw.classfile.Module;
 import dev.xdark.blw.classfile.*;
 import dev.xdark.blw.classfile.attribute.InnerClass;
@@ -21,6 +22,8 @@ public class GenericClassBuilder implements ClassBuilder<GenericClassFileView, G
 	protected final List<InstanceType> interfaces = LazyList.arrayList();
 	protected final List<AnnotationBuilder<?>> visibleRuntimeAnnotations = LazyList.arrayList();
 	protected final List<AnnotationBuilder<?>> invisibleRuntimeAnnotations = LazyList.arrayList();
+	protected final List<TypeAnnotationBuilder<?>> visibleRuntimeTypeAnnotations = LazyList.arrayList();
+	protected final List<TypeAnnotationBuilder<?>> invisibleRuntimeTypeAnnotations = LazyList.arrayList();
 	protected final Map<MemberIdentifier, Reflectable<Method>> methods = LazyMap.linked();
 	protected final Map<MemberIdentifier, Reflectable<Field>> fields = LazyMap.linked();
 	protected final Map<MemberIdentifier, Reflectable<RecordComponent>> recordComponents = LazyMap.linked();
@@ -93,6 +96,19 @@ public class GenericClassBuilder implements ClassBuilder<GenericClassFileView, G
 	public @NotNull List<AnnotationBuilder<?>> getInvisibleRuntimeAnnotation() {
 		return invisibleRuntimeAnnotations;
 	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public @NotNull List<TypeAnnotationBuilder<?>> getVisibleRuntimeTypeAnnotations() {
+		return visibleRuntimeTypeAnnotations;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public @NotNull List<TypeAnnotationBuilder<?>> getInvisibleRuntimeTypeAnnotation() {
+		return invisibleRuntimeTypeAnnotations;
+	}
+
 	@Override
 	public ConstantPool getConstantPool() {
 		return pool;
@@ -389,6 +405,8 @@ public class GenericClassBuilder implements ClassBuilder<GenericClassFileView, G
 				sourceDebug,
 				buildVisibleRuntimeAnnotations(),
 				buildInvisibleRuntimeAnnotation(),
+				buildVisibleRuntimeTypeAnnotations(),
+				buildInvisibleRuntimeTypeAnnotation(),
 				buildList(modules)
 		);
 	}
