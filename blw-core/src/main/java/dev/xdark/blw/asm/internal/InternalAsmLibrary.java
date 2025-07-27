@@ -16,6 +16,7 @@ import dev.xdark.blw.simulation.StraightforwardSimulation;
 import dev.xdark.blw.type.*;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.*;
+import org.objectweb.asm.TypePath;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -129,11 +130,19 @@ public final class InternalAsmLibrary implements BytecodeLibrary {
 				AnnotationDumper dumper = rcv::visitAnnotation;
 				dumpAnnotationList(dumper, recordComponent.visibleRuntimeAnnotations(), true);
 				dumpAnnotationList(dumper, recordComponent.invisibleRuntimeAnnotations(), false);
+
+				TypeAnnotationDumper typeDumper = rcv::visitTypeAnnotation;
+				dumpAnnotationList(typeDumper, recordComponent.visibleRuntimeTypeAnnotations(), true);
+				dumpAnnotationList(typeDumper, recordComponent.invisibleRuntimeTypeAnnotations(), false);
 			}
 
-			AnnotationDumper writerDumper = writer::visitAnnotation;
-			dumpAnnotationList(writerDumper, classFileView.visibleRuntimeAnnotations(), true);
-			dumpAnnotationList(writerDumper, classFileView.invisibleRuntimeAnnotations(), false);
+			AnnotationDumper dumper = writer::visitAnnotation;
+			dumpAnnotationList(dumper, classFileView.visibleRuntimeAnnotations(), true);
+			dumpAnnotationList(dumper, classFileView.invisibleRuntimeAnnotations(), false);
+
+			TypeAnnotationDumper typeDumper = writer::visitTypeAnnotation;
+			dumpAnnotationList(typeDumper, classFileView.visibleRuntimeTypeAnnotations(), true);
+			dumpAnnotationList(typeDumper, classFileView.invisibleRuntimeTypeAnnotations(), false);
 
 			List<Module> modules = classFileView.modules();
 			if (modules != null) for (Module module : modules) {
@@ -186,6 +195,10 @@ public final class InternalAsmLibrary implements BytecodeLibrary {
 				AnnotationDumper dumper = mv::visitAnnotation;
 				dumpAnnotationList(dumper, method.visibleRuntimeAnnotations(), true);
 				dumpAnnotationList(dumper, method.invisibleRuntimeAnnotations(), false);
+
+				TypeAnnotationDumper typeDumper = mv::visitTypeAnnotation;
+				dumpAnnotationList(typeDumper, method.visibleRuntimeTypeAnnotations(), true);
+				dumpAnnotationList(typeDumper, method.invisibleRuntimeTypeAnnotations(), false);
 			}
 			{
 				method.visibleRuntimeParameterAnnotations().forEach((idx, parameters) -> {
@@ -228,9 +241,15 @@ public final class InternalAsmLibrary implements BytecodeLibrary {
 		for (Field field : classFileView.fields()) {
 			Constant cst;
 			FieldVisitor fv = writer.visitField(field.accessFlags(), field.name(), field.type().descriptor(), field.signature(), (cst = field.defaultValue()) == null ? null : Util.unwrapConstant(cst));
+
 			AnnotationDumper dumper = fv::visitAnnotation;
 			dumpAnnotationList(dumper, field.visibleRuntimeAnnotations(), true);
 			dumpAnnotationList(dumper, field.invisibleRuntimeAnnotations(), false);
+
+			TypeAnnotationDumper typeDumper = fv::visitTypeAnnotation;
+			dumpAnnotationList(typeDumper, field.visibleRuntimeTypeAnnotations(), true);
+			dumpAnnotationList(typeDumper, field.invisibleRuntimeTypeAnnotations(), false);
+
 			fv.visitEnd();
 		}
 		writer.visitEnd();
@@ -343,9 +362,27 @@ public final class InternalAsmLibrary implements BytecodeLibrary {
 		AnnotationVisitor visitAnnotation(String descriptor, boolean visible);
 	}
 
+	private interface TypeAnnotationDumper {
+		AnnotationVisitor visitAnnotation(int typeRef, TypePath typePath, String descriptor, boolean visible);
+	}
+
 	private void dumpAnnotationList(AnnotationDumper dumper, List<Annotation> annotations, boolean visible) {
 		for (Annotation annotation : annotations) {
 			AnnotationVisitor visitor = dumper.visitAnnotation(annotation.type().descriptor(), visible);
+			if (visitor == null) {
+				continue;
+			}
+			for (Map.Entry<String, Element> entry : annotation) {
+				visitElement(visitor, entry.getKey(), entry.getValue());
+			}
+			visitor.visitEnd();
+		}
+	}
+
+	private void dumpAnnotationList(TypeAnnotationDumper dumper, List<TypeAnnotation> annotations, boolean visible) {
+		for (TypeAnnotation annotation : annotations) {
+			TypePath typePath = annotation.typePath() == null ? null : TypePath.fromString(annotation.typePath().toString());
+			AnnotationVisitor visitor = dumper.visitAnnotation(annotation.typeRef(), typePath, annotation.type().descriptor(), visible);
 			if (visitor == null) {
 				continue;
 			}
